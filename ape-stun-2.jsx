@@ -1,0 +1,1 @@
+﻿/**********************************************************ape-stun-2.jsxDESCRIPTIONOpens lettering AI file using "Crop Areas", fills all letters 100%Kand adds a bounding box of empty type.Locks all layers at the end and saves as an EPS. **********************************************************/
