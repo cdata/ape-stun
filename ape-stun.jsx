@@ -1,69 +1,1 @@
-(function (global) {
-  var app = global.app;
-  var files = app.openDialog();
-
-  function pathname (doc) {
-    return Folder(doc.fullName.parent).fsName
-  }
-
-  function each (list, iterator) {
-    for (var index = 0; index < list.length; ++index) {
-      iterator(list[index], index, list);
-    }
-  }
-
-  function exportPathsForIllustrator (doc) {
-    var date = new Date().toLocaleString();
-    var name = doc.name.replace(/(\.[a-z0-9]*)$/i, '');
-    var path = pathname(doc);
-    var options = new ExportOptionsIllustrator();
-    var output;
-    var file;
-    var options;
-
-    date = date.replace(/\//g, '-').replace(/\s/g, '.').replace(/[,]/g, '');
-    options.path = IllustratorPathType.ALLPATHS;
-    output = path + '/' + name + '.ai';
-    file = new File(output);
-
-    doc.exportDocument(file, ExportType.ILLUSTRATORPATHS, options);
-  }
-
-  function nameDocumentWorkPath (doc, name) {
-    var path = doc.pathItems.getByName('Work Path');
-
-    if (!path) {
-      return;
-    }
-
-    path.name = name;
-  }
-
-  function processLayer (layer) {
-    if (!(layer instanceof ArtLayer)) {
-      return;
-    }
-
-    var textItem = layer.textItem;
-    var doc = layer.parent.parent;
-    var text = textItem.contents;
-    var path;
-
-    textItem.createPath();
-
-    nameDocumentWorkPath(doc, text);
-  }
-
-  function processFile (file) {
-    var doc = app.open(file);
-    var textGroup = doc.layerSets.getByName('Text');
-    var layers = textGroup.layers;
-
-    each(layers, processLayer);
-
-    exportPathsForIllustrator(doc);
-  }
-
-  each(files, processFile);
-
-})(this);
+﻿/**********************************************************ape-stun.jsxDESCRIPTIONCreate a work path for each text layer in Photoshop then export all paths to Illustrator. **********************************************************/(function (global) {  var app = global.app;  var files = app.openDialog();  // Return path name for each document  function pathname (doc) {    return Folder(doc.fullName.parent).fsName  }  // Iterate through each item in a list  function each (list, iterator) {    for (var index = 0; index < list.length; ++index) {      iterator(list[index], index, list);    }  }  // Exports all paths to Illustrator   function exportPathsForIllustrator (doc) {    var date = new Date().toLocaleString();    var name = doc.name.replace(/(\.[a-z0-9]*)$/i, '');    var path = pathname(doc);    var options = new ExportOptionsIllustrator();    var output;    var file;    var options;    date = date.replace(/\//g, '-').replace(/\s/g, '.').replace(/[,]/g, '');    options.path = IllustratorPathType.ALLPATHS;    output = path + '/' + name + '.ai';    file = new File(output);    doc.exportDocument(file, ExportType.ILLUSTRATORPATHS, options);  }  // Rename work path to doc name + #  function nameDocumentWorkPath (doc, name) {    var path = doc.pathItems.getByName('Work Path');    if (!path) {      return;    }    path.name = name;  }  // Create a Work Path for each text layer  function processLayer (layer) {    if (!(layer instanceof ArtLayer)) {      return;    }    var textItem = layer.textItem;    var doc = layer.parent.parent;    var text = textItem.contents;    var path;    textItem.createPath();    nameDocumentWorkPath(doc, text);  }  // Run all functions on opened files  function processFile (file) {    var doc = app.open(file);    var textGroup = doc.layerSets.getByName('Text');    var layers = textGroup.layers;    // Go through each text layer and run the function that creates paths    each(layers, processLayer);        // Run the function that exports all paths to Illustrator    exportPathsForIllustrator(doc);  }  each(files, processFile);})(this);
